@@ -25,13 +25,22 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontWeight: 'bold'
   },
+  headerDivider: {
+    position: 'absolute',
+    left: 30,
+    right: 30,
+    bottom: 80,
+    borderBottomWidth: 1,
+    borderBottomColor: '#93C5FD',
+    opacity: 0.3
+  },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginBottom: 12,
     gap: 20,
     position: 'relative',
-    top: 15
+    marginTop: 20
   },
   headerColumn: {
     flex: 1
@@ -83,9 +92,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2
   },
   simulationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 15,
     paddingBottom: 10,
     borderBottomWidth: 1,
@@ -102,7 +108,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 12,
     color: '#1E40AF',
-    fontSize: 10
+    fontSize: 10,
+    marginTop: 4
   },
   dataRow: {
     flexDirection: 'row',
@@ -150,15 +157,29 @@ const styles = StyleSheet.create({
   },
   comparisonGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 15
   },
   comparisonCard: {
     flex: 1,
-    minWidth: '30%',
     backgroundColor: '#F1F5F9',
     borderRadius: 6,
     padding: 12
+  },
+  comparisonCardTitle: {
+    fontSize: 12,
+    color: '#64748B',
+    marginBottom: 4
+  },
+  comparisonCardValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 4
+  },
+  comparisonCardLabel: {
+    fontSize: 10,
+    color: '#059669',
+    fontWeight: 'medium'
   },
   recommendationSection: {
     backgroundColor: '#FFFFFF',
@@ -175,10 +196,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     gap: 10
-  },
-  recommendationIcon: {
-    width: 24,
-    height: 24
   },
   recommendationTitle: {
     fontSize: 16,
@@ -201,6 +218,19 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0'
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#F8FAFC',
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0'
+  },
+  tableRow: {
+    flexDirection: 'row',
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0'
   }
 });
 
@@ -221,7 +251,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
 }) => {
   return (
     <Document>
-      <Page size={[842, 595]} style={styles.page}>
+      <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Análise Comparativa de Financiamentos</Text>
@@ -257,6 +287,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             </G>
             <Path fill="#f47400" d="M 23.9375 21.996094 C 19.980469 21.707031 15.953125 25.128906 15.894531 29.914062 C 15.84375 34.269531 19.585938 37.960938 23.925781 37.960938 C 28.273438 37.960938 32.035156 34.273438 31.96875 29.921875 C 31.898438 25.113281 27.917969 21.722656 23.9375 21.996094 Z M 23.9375 21.996094" />
           </Svg>
+          <View style={styles.headerDivider} />
         </View>
 
         <View style={styles.content}>
@@ -264,9 +295,12 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             <View style={styles.simulationCard}>
               <View style={styles.simulationHeader}>
                 <Text style={styles.simulationType}>Simulação A - {selectedSimA.type}</Text>
-                <Text style={styles.bankTag}>{selectedSimA.bank || 'Não informado'}</Text>
               </View>
               
+              <View style={styles.dataRow}>
+                <Text style={styles.label}>Banco</Text>
+                <Text style={styles.value}>{selectedSimA.bank || 'Não informado'}</Text>
+              </View>
               <View style={styles.dataRow}>
                 <Text style={styles.label}>Valor Total do Bem</Text>
                 <Text style={styles.value}>{formatCurrency(selectedSimA.financingAmount)}</Text>
@@ -302,9 +336,12 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             <View style={styles.simulationCard}>
               <View style={styles.simulationHeader}>
                 <Text style={styles.simulationType}>Simulação B - {selectedSimB.type}</Text>
-                <Text style={styles.bankTag}>{selectedSimB.bank || 'Não informado'}</Text>
               </View>
               
+              <View style={styles.dataRow}>
+                <Text style={styles.label}>Banco</Text>
+                <Text style={styles.value}>{selectedSimB.bank || 'Não informado'}</Text>
+              </View>
               <View style={styles.dataRow}>
                 <Text style={styles.label}>Valor Total do Bem</Text>
                 <Text style={styles.value}>{formatCurrency(selectedSimB.financingAmount)}</Text>
@@ -342,33 +379,30 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             <Text style={styles.comparisonTitle}>Análise Comparativa</Text>
             <View style={styles.comparisonGrid}>
               <View style={styles.comparisonCard}>
-                <Text style={styles.label}>Diferença no Total de Juros</Text>
-                <Text style={styles.value}>
+                <Text style={styles.comparisonCardTitle}>Diferença no Total de Juros</Text>
+                <Text style={styles.comparisonCardValue}>
                   {formatCurrency(Math.abs(metrics.totalInterestDiff))}
-                  {' - '}
-                  <Text style={styles.highlightValue}>
-                    Opção {metrics.totalInterestDiff > 0 ? 'B' : 'A'} mais econômica
-                  </Text>
+                </Text>
+                <Text style={styles.comparisonCardLabel}>
+                  Opção {metrics.totalInterestDiff > 0 ? 'B' : 'A'} mais econômica
                 </Text>
               </View>
               <View style={styles.comparisonCard}>
-                <Text style={styles.label}>Diferença no Valor Total</Text>
-                <Text style={styles.value}>
+                <Text style={styles.comparisonCardTitle}>Diferença no Valor Total</Text>
+                <Text style={styles.comparisonCardValue}>
                   {formatCurrency(Math.abs(metrics.totalAmountDiff))}
-                  {' - '}
-                  <Text style={styles.highlightValue}>
-                    Opção {metrics.totalAmountDiff > 0 ? 'B' : 'A'} mais econômica
-                  </Text>
+                </Text>
+                <Text style={styles.comparisonCardLabel}>
+                  Opção {metrics.totalAmountDiff > 0 ? 'B' : 'A'} mais econômica
                 </Text>
               </View>
               <View style={styles.comparisonCard}>
-                <Text style={styles.label}>Diferença na Primeira Parcela</Text>
-                <Text style={styles.value}>
+                <Text style={styles.comparisonCardTitle}>Diferença na Primeira Parcela</Text>
+                <Text style={styles.comparisonCardValue}>
                   {formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}
-                  {' - '}
-                  <Text style={styles.highlightValue}>
-                    Opção {metrics.monthlyPaymentDiff > 0 ? 'B' : 'A'} mais econômica
-                  </Text>
+                </Text>
+                <Text style={styles.comparisonCardLabel}>
+                  Opção {metrics.monthlyPaymentDiff > 0 ? 'B' : 'A'} mais econômica
                 </Text>
               </View>
             </View>
@@ -411,7 +445,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
         </View>
       </Page>
 
-      <Page size={[842, 595]} style={styles.page}>
+      <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Evolução das Parcelas</Text>
         </View>
@@ -428,7 +462,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             {selectedSimA.installments.map((installment: any, index: number) => {
               const diff = installment.payment - selectedSimB.installments[index].payment;
               return (
-                <View key={index} style={[styles.dataRow, { backgroundColor: index % 2 === 0 ? '#F8FAFC' : '#FFFFFF' }]}>
+                <View key={index} style={[styles.tableRow, { backgroundColor: index % 2 === 0 ? '#F8FAFC' : '#FFFFFF' }]}>
                   <Text style={[styles.value, { flex: 1 }]}>{installment.number}</Text>
                   <Text style={[styles.value, { flex: 2 }]}>{installment.date}</Text>
                   <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installment.payment)}</Text>
