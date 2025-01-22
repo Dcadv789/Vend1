@@ -216,6 +216,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0'
   },
+  pageNumber: {
+    position: 'absolute',
+    bottom: 30,
+    left: 30,
+    fontSize: 10,
+    color: '#94A3B8'
+  },
+  installmentsContent: {
+    padding: 30,
+    paddingBottom: 90
+  },
   tableHeader: {
     flexDirection: 'row',
     backgroundColor: '#F8FAFC',
@@ -228,63 +239,8 @@ const styles = StyleSheet.create({
     padding: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0'
-  },
-  installmentsContent: {
-    padding: 30,
-    paddingBottom: 90
-  },
-  installmentsHeader: {
-    marginBottom: 20
-  },
-  installmentsTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 8
-  },
-  installmentsSubtitle: {
-    fontSize: 14,
-    color: '#64748B'
   }
 });
-
-const renderHeader = (title: string) => (
-  <View style={styles.header}>
-    <Text style={styles.headerTitle}>{title}</Text>
-    <View style={styles.headerContent}>
-      <View style={styles.headerRow}>
-        <View style={styles.headerColumn}>
-          <Text style={styles.headerDateLabel}>Data</Text>
-          <Text style={styles.headerDateValue}>
-            {new Date().toLocaleDateString('pt-BR')}
-          </Text>
-        </View>
-        <View style={styles.headerColumn}>
-          <Text style={styles.headerDateLabel}>Horário</Text>
-          <Text style={styles.headerDateValue}>
-            {new Date().toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false
-            })}
-          </Text>
-        </View>
-      </View>
-    </View>
-    <Svg style={styles.headerLogo} viewBox="0 0 60 60">
-      <Defs>
-        <ClipPath id="9dbc95d808">
-          <Path d="M 1.207031 7.21875 L 58.957031 7.21875 L 58.957031 52.96875 L 1.207031 52.96875 Z M 1.207031 7.21875" />
-        </ClipPath>
-      </Defs>
-      <G clipPath="url(#9dbc95d808)">
-        <Path fill="#ffffff" d="M 58.625 15.542969 C 57.542969 13.085938 55.605469 9.53125 54.019531 7.21875 C 52.308594 9.972656 49.816406 13.933594 48.246094 16.449219 C 44.011719 23.226562 39.804688 30.019531 35.550781 36.777344 C 33.320312 40.324219 30.179688 42.554688 25.960938 43.203125 C 19.546875 44.1875 13.242188 40.433594 11.1875 34.339844 C 9.050781 28.007812 11.71875 21.121094 17.507812 18.023438 C 23.902344 14.601562 31.660156 16.738281 35.539062 22.996094 C 35.96875 23.691406 36.390625 23.703125 36.808594 23.039062 C 38.042969 21.066406 39.277344 19.09375 40.519531 17.121094 C 41.394531 15.734375 41.417969 15.695312 40.222656 14.488281 C 34.941406 9.164062 28.554688 6.792969 21.101562 7.675781 C 8.878906 9.117188 0.0625 20.542969 1.683594 32.769531 C 3.238281 44.453125 13.320312 52.46875 23.871094 52.246094 C 31.03125 52.175781 36.945312 49.433594 41.453125 43.84375 C 43.527344 41.273438 45.066406 38.332031 46.820312 35.542969 C 50.667969 29.417969 54.488281 23.269531 58.335938 17.136719 C 58.652344 16.632812 58.898438 16.167969 58.625 15.546875 Z M 58.625 15.542969" />
-      </G>
-      <Path fill="#f47400" d="M 23.9375 21.996094 C 19.980469 21.707031 15.953125 25.128906 15.894531 29.914062 C 15.84375 34.269531 19.585938 37.960938 23.925781 37.960938 C 28.273438 37.960938 32.035156 34.273438 31.96875 29.921875 C 31.898438 25.113281 27.917969 21.722656 23.9375 21.996094 Z M 23.9375 21.996094" />
-    </Svg>
-  </View>
-);
 
 const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({ 
   selectedSimA, 
@@ -293,6 +249,100 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
   getBetterOption,
   formatCurrency 
 }) => {
+  const renderHeader = (title: string) => (
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>{title}</Text>
+      <View style={styles.headerContent}>
+        <View style={styles.headerRow}>
+          <View style={styles.headerColumn}>
+            <Text style={styles.headerDateLabel}>Data</Text>
+            <Text style={styles.headerDateValue}>
+              {new Date().toLocaleDateString('pt-BR')}
+            </Text>
+          </View>
+          <View style={styles.headerColumn}>
+            <Text style={styles.headerDateLabel}>Horário</Text>
+            <Text style={styles.headerDateValue}>
+              {new Date().toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              })}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <Svg style={styles.headerLogo} viewBox="0 0 60 60">
+        <Defs>
+          <ClipPath id="9dbc95d808">
+            <Path d="M 1.207031 7.21875 L 58.957031 7.21875 L 58.957031 52.96875 L 1.207031 52.96875 Z M 1.207031 7.21875" />
+          </ClipPath>
+        </Defs>
+        <G clipPath="url(#9dbc95d808)">
+          <Path fill="#ffffff" d="M 58.625 15.542969 C 57.542969 13.085938 55.605469 9.53125 54.019531 7.21875 C 52.308594 9.972656 49.816406 13.933594 48.246094 16.449219 C 44.011719 23.226562 39.804688 30.019531 35.550781 36.777344 C 33.320312 40.324219 30.179688 42.554688 25.960938 43.203125 C 19.546875 44.1875 13.242188 40.433594 11.1875 34.339844 C 9.050781 28.007812 11.71875 21.121094 17.507812 18.023438 C 23.902344 14.601562 31.660156 16.738281 35.539062 22.996094 C 35.96875 23.691406 36.390625 23.703125 36.808594 23.039062 C 38.042969 21.066406 39.277344 19.09375 40.519531 17.121094 C 41.394531 15.734375 41.417969 15.695312 40.222656 14.488281 C 34.941406 9.164062 28.554688 6.792969 21.101562 7.675781 C 8.878906 9.117188 0.0625 20.542969 1.683594 32.769531 C 3.238281 44.453125 13.320312 52.46875 23.871094 52.246094 C 31.03125 52.175781 36.945312 49.433594 41.453125 43.84375 C 43.527344 41.273438 45.066406 38.332031 46.820312 35.542969 C 50.667969 29.417969 54.488281 23.269531 58.335938 17.136719 C 58.652344 16.632812 58.898438 16.167969 58.625 15.546875 Z M 58.625 15.542969" />
+        </G>
+        <Path fill="#f47400" d="M 23.9375 21.996094 C 19.980469 21.707031 15.953125 25.128906 15.894531 29.914062 C 15.84375 34.269531 19.585938 37.960938 23.925781 37.960938 C 28.273438 37.960938 32.035156 34.273438 31.96875 29.921875 C 31.898438 25.113281 27.917969 21.722656 23.9375 21.996094 Z M 23.9375 21.996094" />
+      </Svg>
+    </View>
+  );
+
+  const installmentsPerPage = 25;
+  const totalInstallments = Math.min(
+    selectedSimA.installments.length,
+    selectedSimB.installments.length
+  );
+  const totalPages = Math.ceil(totalInstallments / installmentsPerPage);
+
+  const pages = [];
+  for (let i = 0; i < totalPages; i++) {
+    const startIndex = i * installmentsPerPage;
+    const endIndex = Math.min(startIndex + installmentsPerPage, totalInstallments);
+    const installments = Array.from({ length: endIndex - startIndex }).map((_, idx) => startIndex + idx);
+
+    pages.push(
+      <Page key={i} size="A4" style={styles.page}>
+        {renderHeader('Evolução das Parcelas')}
+        <View style={styles.installmentsContent}>
+          <View style={styles.comparisonSection}>
+            <View style={styles.tableHeader}>
+              <Text style={[styles.value, { flex: 1 }]}>Nº</Text>
+              <Text style={[styles.value, { flex: 2 }]}>Data</Text>
+              <Text style={[styles.value, { flex: 2 }]}>Simulação A</Text>
+              <Text style={[styles.value, { flex: 2 }]}>Simulação B</Text>
+              <Text style={[styles.value, { flex: 3 }]}>Diferença</Text>
+            </View>
+            {installments.map((index) => {
+              if (!selectedSimA.installments[index] || !selectedSimB.installments[index]) {
+                return null;
+              }
+
+              const installmentA = selectedSimA.installments[index];
+              const installmentB = selectedSimB.installments[index];
+              const diff = installmentA.payment - installmentB.payment;
+
+              return (
+                <View key={index} style={[styles.tableRow, { backgroundColor: index % 2 === 0 ? '#F8FAFC' : '#FFFFFF' }]}>
+                  <Text style={[styles.value, { flex: 1 }]}>{installmentA.number}</Text>
+                  <Text style={[styles.value, { flex: 2 }]}>{installmentA.date}</Text>
+                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
+                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
+                  <Text style={[styles.value, { flex: 3 }]}>
+                    {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
+                  </Text>
+                </View>
+              );
+            }).filter(Boolean)}
+          </View>
+        </View>
+        <Text style={styles.pageNumber}>Página {i + 2}</Text>
+        <Text style={styles.footer}>
+          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
+        </Text>
+      </Page>
+    );
+  }
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -467,44 +517,12 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             )}
           </View>
         </View>
+        <Text style={styles.pageNumber}>Página 1</Text>
         <Text style={styles.footer}>
           Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
         </Text>
       </Page>
-
-      <Page size="A4" style={styles.page}>
-        {renderHeader('Evolução das Parcelas')}
-        <View style={styles.installmentsContent}>
-          <View style={styles.comparisonSection}>
-            <View style={styles.tableHeader}>
-              <Text style={[styles.value, { flex: 1 }]}>Nº</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Data</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Simulação A</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Simulação B</Text>
-              <Text style={[styles.value, { flex: 3 }]}>Diferença</Text>
-            </View>
-            {Array.from({ length: Math.min(selectedSimA.installments.length, selectedSimB.installments.length) }).map((_, index) => {
-              const installmentA = selectedSimA.installments[index];
-              const installmentB = selectedSimB.installments[index];
-              const diff = installmentA.payment - installmentB.payment;
-              return (
-                <View key={index} style={[styles.tableRow, { backgroundColor: index % 2 === 0 ? '#F8FAFC' : '#FFFFFF' }]}>
-                  <Text style={[styles.value, { flex: 1 }]}>{installmentA.number}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{installmentA.date}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
-                  <Text style={[styles.value, { flex: 3 }]}>
-                    {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-        <Text style={styles.footer}>
-          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
-        </Text>
-      </Page>
+      {pages}
     </Document>
   );
 };
