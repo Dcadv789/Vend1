@@ -10,22 +10,19 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#1E40AF',
     padding: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    height: 120
+    flexDirection: 'column',
+    height: 140
   },
   headerContent: {
     flex: 1,
-    marginRight: 100
+    marginRight: 100,
+    marginTop: 40
   },
   headerTitle: {
     color: '#FFFFFF',
-    fontSize: 22,
-    marginBottom: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    position: 'absolute',
-    top: 20
+    marginBottom: 20
   },
   headerRow: {
     flexDirection: 'row',
@@ -88,15 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1E293B'
-  },
-  bankTag: {
-    backgroundColor: '#EFF6FF',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-    color: '#1E40AF',
-    fontSize: 10,
-    marginTop: 4
   },
   dataRow: {
     flexDirection: 'row',
@@ -169,20 +157,11 @@ const styles = StyleSheet.create({
     fontWeight: 'medium'
   },
   recommendationContainer: {
-    flexDirection: 'row',
-    gap: 20,
-    marginBottom: 20
+    marginBottom: 20,
+    padding: 0,
+    marginHorizontal: 30
   },
   recommendationSection: {
-    flex: 2,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0'
-  },
-  recommendationSideSection: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 20,
@@ -217,32 +196,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#166534',
     lineHeight: 1.4
-  },
-  recommendationStats: {
-    marginTop: 12,
-    backgroundColor: '#F8FAFC',
-    borderRadius: 6,
-    padding: 12
-  },
-  recommendationStatsTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 8
-  },
-  recommendationStatsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6
-  },
-  recommendationStatsLabel: {
-    fontSize: 10,
-    color: '#64748B'
-  },
-  recommendationStatsValue: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#1E293B'
   },
   footer: {
     position: 'absolute',
@@ -290,9 +243,8 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
+          <Text style={styles.headerTitle}>Análise Comparativa de Financiamentos</Text>
           <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>Análise Comparativa de Financiamentos</Text>
-            
             <View style={styles.headerRow}>
               <View style={styles.headerColumn}>
                 <Text style={styles.headerDateLabel}>Data</Text>
@@ -452,58 +404,33 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
               {getBetterOption() === 'empate' ? (
                 <>
                   <Text style={styles.recommendationText}>
-                    As simulações são equivalentes em termos financeiros. Considere os seguintes aspectos para sua decisão:
+                    As simulações são equivalentes em termos financeiros. 
+                    Considere os seguintes aspectos para sua decisão:
                   </Text>
                   <View style={styles.recommendationHighlight}>
                     <Text style={styles.recommendationHighlightText}>
-                      • Sua disponibilidade financeira mensal{'\n'}
-                      • Preferência pelo sistema de amortização{'\n'}
-                      • Condições específicas oferecidas por cada banco{'\n'}
-                      • Possibilidade de pagamentos antecipados
+                      1. Sua disponibilidade financeira mensal{'\n'}
+                      2. Preferência pelo sistema de amortização{'\n'}
+                      3. Condições específicas oferecidas por cada banco{'\n'}
+                      4. Possibilidade de pagamentos antecipados
                     </Text>
                   </View>
                 </>
               ) : (
                 <>
                   <Text style={styles.recommendationText}>
-                    A Simulação {getBetterOption()} apresenta condições mais vantajosas para o seu financiamento.
-                    Baseado na análise detalhada dos números, esta opção oferece uma melhor relação custo-benefício
-                    e maior economia a longo prazo.
+                    A Simulação {getBetterOption()} apresenta condições mais vantajosas:
                   </Text>
                   <View style={styles.recommendationHighlight}>
                     <Text style={styles.recommendationHighlightText}>
-                      • Menor custo total de financiamento{'\n'}
-                      • Melhor distribuição das parcelas{'\n'}
-                      • Menor incidência de juros{'\n'}
-                      • Melhor relação custo-benefício
+                      1. Menor custo total de financiamento{'\n'}
+                      2. Melhor distribuição das parcelas{'\n'}
+                      3. Menor incidência de juros{'\n'}
+                      4. Melhor relação custo-benefício
                     </Text>
                   </View>
                 </>
               )}
-            </View>
-            
-            <View style={styles.recommendationSideSection}>
-              <Text style={styles.recommendationStatsTitle}>Análise Financeira</Text>
-              <View style={styles.recommendationStats}>
-                <View style={styles.recommendationStatsRow}>
-                  <Text style={styles.recommendationStatsLabel}>Economia Total:</Text>
-                  <Text style={styles.recommendationStatsValue}>
-                    {formatCurrency(Math.abs(metrics.totalAmountDiff))}
-                  </Text>
-                </View>
-                <View style={styles.recommendationStatsRow}>
-                  <Text style={styles.recommendationStatsLabel}>Economia em Juros:</Text>
-                  <Text style={styles.recommendationStatsValue}>
-                    {formatCurrency(Math.abs(metrics.totalInterestDiff))}
-                  </Text>
-                </View>
-                <View style={styles.recommendationStatsRow}>
-                  <Text style={styles.recommendationStatsLabel}>Diferença Mensal:</Text>
-                  <Text style={styles.recommendationStatsValue}>
-                    {formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}
-                  </Text>
-                </View>
-              </View>
             </View>
           </View>
 
