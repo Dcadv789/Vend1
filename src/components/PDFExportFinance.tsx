@@ -30,9 +30,9 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    gap: 20,
+    gap: 140,
     position: 'absolute',
-    bottom: 0
+    bottom: 17
   },
   headerColumn: {
     flex: 1
@@ -213,19 +213,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0'
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#F8FAFC',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0'
-  },
-  tableRow: {
-    flexDirection: 'row',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0'
   }
 });
 
