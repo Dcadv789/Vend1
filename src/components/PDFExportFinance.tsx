@@ -297,9 +297,9 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
     </View>
   );
 
-  const renderInstallmentsTable = (startIndex: number, endIndex: number) => (
+  const renderInstallmentsTable = (startIndex: number, endIndex: number, showHeader: boolean = false) => (
     <View style={styles.comparisonSection}>
-      {startIndex === 0 && (
+      {showHeader && (
         <View style={styles.tableHeader}>
           <Text style={[styles.tableCellHeader, { flex: 0.5 }]}>Nº</Text>
           <Text style={[styles.tableCellHeader, { flex: 1.5 }]}>Data</Text>
@@ -333,13 +333,203 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
   const remainingInstallments = totalInstallments - 20;
   const additionalPages = Math.ceil(remainingInstallments / 25);
 
-  const installmentPages = [];
+  const pages = [
+    <Page key="page-1" size="A4" style={styles.page}>
+      {renderHeader('Análise Comparativa de Financiamentos')}
+      <View style={styles.content}>
+        <View style={styles.simulationsContainer}>
+          <View style={styles.simulationCard}>
+            <View style={styles.simulationHeader}>
+              <Text style={styles.simulationType}>Simulação A - {selectedSimA.type}</Text>
+            </View>
+            
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Banco</Text>
+              <Text style={styles.value}>{selectedSimA.bank || 'Não informado'}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor Total do Bem</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimA.financingAmount)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor da Entrada</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimA.downPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor Financiado</Text>
+              <Text style={styles.value}>
+                {formatCurrency(selectedSimA.financingAmount - selectedSimA.downPayment)}
+              </Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Taxa Mensal</Text>
+              <Text style={styles.value}>{selectedSimA.monthlyRate}%</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Primeira Parcela</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimA.firstPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Última Parcela</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimA.lastPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Total de Juros</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimA.totalInterest)}</Text>
+            </View>
+          </View>
+
+          <View style={styles.simulationCard}>
+            <View style={styles.simulationHeader}>
+              <Text style={styles.simulationType}>Simulação B - {selectedSimB.type}</Text>
+            </View>
+            
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Banco</Text>
+              <Text style={styles.value}>{selectedSimB.bank || 'Não informado'}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor Total do Bem</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimB.financingAmount)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor da Entrada</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimB.downPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Valor Financiado</Text>
+              <Text style={styles.value}>
+                {formatCurrency(selectedSimB.financingAmount - selectedSimB.downPayment)}
+              </Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Taxa Mensal</Text>
+              <Text style={styles.value}>{selectedSimB.monthlyRate}%</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Primeira Parcela</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimB.firstPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Última Parcela</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimB.lastPayment)}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Total de Juros</Text>
+              <Text style={styles.value}>{formatCurrency(selectedSimB.totalInterest)}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.comparisonSection}>
+          <Text style={styles.comparisonTitle}>Análise Comparativa</Text>
+          <View style={styles.comparisonGrid}>
+            <View style={styles.comparisonCard}>
+              <Text style={styles.comparisonCardTitle}>Diferença no Total de Juros</Text>
+              <Text style={styles.comparisonCardValue}>
+                {formatCurrency(Math.abs(metrics.totalInterestDiff))}
+              </Text>
+              <Text style={styles.comparisonCardLabel}>
+                Opção {metrics.totalInterestDiff > 0 ? 'B' : 'A'} mais econômica
+              </Text>
+            </View>
+            <View style={styles.comparisonCard}>
+              <Text style={styles.comparisonCardTitle}>Diferença no Valor Total</Text>
+              <Text style={styles.comparisonCardValue}>
+                {formatCurrency(Math.abs(metrics.totalAmountDiff))}
+              </Text>
+              <Text style={styles.comparisonCardLabel}>
+                Opção {metrics.totalAmountDiff > 0 ? 'B' : 'A'} mais econômica
+              </Text>
+            </View>
+            <View style={styles.comparisonCard}>
+              <Text style={styles.comparisonCardTitle}>Diferença na parcela 1</Text>
+              <Text style={styles.comparisonCardValue}>
+                {formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}
+              </Text>
+              <Text style={styles.comparisonCardLabel}>
+                Opção {metrics.monthlyPaymentDiff > 0 ? 'B' : 'A'} mais econômica
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.recommendationSection}>
+          <View style={styles.recommendationHeader}>
+            <Text style={styles.recommendationTitle}>Recomendação</Text>
+          </View>
+          {getBetterOption() === 'empate' ? (
+            <>
+              <Text style={styles.recommendationText}>
+                As simulações são equivalentes em termos financeiros. 
+                Considere os seguintes aspectos para sua decisão:
+              </Text>
+              <View style={styles.recommendationHighlight}>
+                <View style={styles.recommendationColumns}>
+                  <View style={styles.recommendationColumn}>
+                    <Text style={styles.recommendationHighlightText}>
+                      1. Sua disponibilidade financeira mensal{'\n'}
+                      2. Preferência pelo sistema de amortização
+                    </Text>
+                  </View>
+                  <View style={styles.recommendationColumn}>
+                    <Text style={styles.recommendationHighlightText}>
+                      3. Condições oferecidas por cada banco{'\n'}
+                      4. Possibilidade de pagamentos antecipados
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={styles.recommendationText}>
+                A Simulação {getBetterOption()} apresenta condições mais vantajosas:
+              </Text>
+              <View style={styles.recommendationHighlight}>
+                <View style={styles.recommendationColumns}>
+                  <View style={styles.recommendationColumn}>
+                    <Text style={styles.recommendationHighlightText}>
+                      1. Menor custo total de financiamento{'\n'}
+                      2. Melhor distribuição das parcelas
+                    </Text>
+                  </View>
+                  <View style={styles.recommendationColumn}>
+                    <Text style={styles.recommendationHighlightText}>
+                      3. Menor incidência de juros{'\n'}
+                      4. Melhor relação custo-benefício
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </>
+          )}
+        </View>
+      </View>
+      <Text style={styles.pageNumber}>Página 1</Text>
+      <Text style={styles.footer}>
+        Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
+      </Text>
+    </Page>,
+
+    <Page key="page-2" size="A4" style={styles.page}>
+      {renderHeader('Evolução das Parcelas')}
+      <View style={styles.installmentsContent}>
+        {renderInstallmentsTable(0, 20, true)}
+      </View>
+      <Text style={styles.pageNumber}>Página 2</Text>
+      <Text style={styles.footer}>
+        Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
+      </Text>
+    </Page>
+  ];
+
   for (let i = 0; i < additionalPages; i++) {
     const startIndex = 20 + (i * 25);
     const endIndex = Math.min(startIndex + 25, totalInstallments);
     
-    installmentPages.push(
-      <Page key={i + 2} size="A4" style={styles.page}>
+    pages.push(
+      <Page key={`page-${i + 3}`} size="A4" style={styles.page}>
         <View style={styles.installmentsContent}>
           {renderInstallmentsTable(startIndex, endIndex)}
         </View>
@@ -351,200 +541,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
     );
   }
 
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        {renderHeader('Análise Comparativa de Financiamentos')}
-        <View style={styles.content}>
-          <View style={styles.simulationsContainer}>
-            <View style={styles.simulationCard}>
-              <View style={styles.simulationHeader}>
-                <Text style={styles.simulationType}>Simulação A - {selectedSimA.type}</Text>
-              </View>
-              
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Banco</Text>
-                <Text style={styles.value}>{selectedSimA.bank || 'Não informado'}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor Total do Bem</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimA.financingAmount)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor da Entrada</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimA.downPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor Financiado</Text>
-                <Text style={styles.value}>
-                  {formatCurrency(selectedSimA.financingAmount - selectedSimA.downPayment)}
-                </Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Taxa Mensal</Text>
-                <Text style={styles.value}>{selectedSimA.monthlyRate}%</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Primeira Parcela</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimA.firstPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Última Parcela</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimA.lastPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Total de Juros</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimA.totalInterest)}</Text>
-              </View>
-            </View>
-
-            <View style={styles.simulationCard}>
-              <View style={styles.simulationHeader}>
-                <Text style={styles.simulationType}>Simulação B - {selectedSimB.type}</Text>
-              </View>
-              
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Banco</Text>
-                <Text style={styles.value}>{selectedSimB.bank || 'Não informado'}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor Total do Bem</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimB.financingAmount)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor da Entrada</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimB.downPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Valor Financiado</Text>
-                <Text style={styles.value}>
-                  {formatCurrency(selectedSimB.financingAmount - selectedSimB.downPayment)}
-                </Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Taxa Mensal</Text>
-                <Text style={styles.value}>{selectedSimB.monthlyRate}%</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Primeira Parcela</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimB.firstPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Última Parcela</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimB.lastPayment)}</Text>
-              </View>
-              <View style={styles.dataRow}>
-                <Text style={styles.label}>Total de Juros</Text>
-                <Text style={styles.value}>{formatCurrency(selectedSimB.totalInterest)}</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.comparisonSection}>
-            <Text style={styles.comparisonTitle}>Análise Comparativa</Text>
-            <View style={styles.comparisonGrid}>
-              <View style={styles.comparisonCard}>
-                <Text style={styles.comparisonCardTitle}>Diferença no Total de Juros</Text>
-                <Text style={styles.comparisonCardValue}>
-                  {formatCurrency(Math.abs(metrics.totalInterestDiff))}
-                </Text>
-                <Text style={styles.comparisonCardLabel}>
-                  Opção {metrics.totalInterestDiff > 0 ? 'B' : 'A'} mais econômica
-                </Text>
-              </View>
-              <View style={styles.comparisonCard}>
-                <Text style={styles.comparisonCardTitle}>Diferença no Valor Total</Text>
-                <Text style={styles.comparisonCardValue}>
-                  {formatCurrency(Math.abs(metrics.totalAmountDiff))}
-                </Text>
-                <Text style={styles.comparisonCardLabel}>
-                  Opção {metrics.totalAmountDiff > 0 ? 'B' : 'A'} mais econômica
-                </Text>
-              </View>
-              <View style={styles.comparisonCard}>
-                <Text style={styles.comparisonCardTitle}>Diferença na parcela 1</Text>
-                <Text style={styles.comparisonCardValue}>
-                  {formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}
-                </Text>
-                <Text style={styles.comparisonCardLabel}>
-                  Opção {metrics.monthlyPaymentDiff > 0 ? 'B' : 'A'} mais econômica
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.recommendationSection}>
-            <View style={styles.recommendationHeader}>
-              <Text style={styles.recommendationTitle}>Recomendação</Text>
-            </View>
-            {getBetterOption() === 'empate' ? (
-              <>
-                <Text style={styles.recommendationText}>
-                  As simulações são equivalentes em termos financeiros. 
-                  Considere os seguintes aspectos para sua decisão:
-                </Text>
-                <View style={styles.recommendationHighlight}>
-                  <View style={styles.recommendationColumns}>
-                    <View style={styles.recommendationColumn}>
-                      <Text style={styles.recommendationHighlightText}>
-                        1. Sua disponibilidade financeira mensal{'\n'}
-                        2. Preferência pelo sistema de amortização
-                      </Text>
-                    </View>
-                    <View style={styles.recommendationColumn}>
-                      <Text style={styles.recommendationHighlightText}>
-                        3. Condições oferecidas por cada banco{'\n'}
-                        4. Possibilidade de pagamentos antecipados
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </>
-            ) : (
-              <>
-                <Text style={styles.recommendationText}>
-                  A Simulação {getBetterOption()} apresenta condições mais vantajosas:
-                </Text>
-                <View style={styles.recommendationHighlight}>
-                  <View style={styles.recommendationColumns}>
-                    <View style={styles.recommendationColumn}>
-                      <Text style={styles.recommendationHighlightText}>
-                        1. Menor custo total de financiamento{'\n'}
-                        2. Melhor distribuição das parcelas
-                      </Text>
-                    </View>
-                    <View style={styles.recommendationColumn}>
-                      <Text style={styles.recommendationHighlightText}>
-                        3. Menor incidência de juros{'\n'}
-                        4. Melhor relação custo-benefício
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-        <Text style={styles.pageNumber}>Página 1</Text>
-        <Text style={styles.footer}>
-          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
-        </Text>
-      </Page>
-
-      <Page size="A4" style={styles.page}>
-        {renderHeader('Evolução das Parcelas')}
-        <View style={styles.installmentsContent}>
-          {renderInstallmentsTable(0, 20)}
-        </View>
-        <Text style={styles.pageNumber}>Página 2</Text>
-        <Text style={styles.footer}>
-          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
-        </Text>
-      </Page>
-
-      {installmentPages}
-    </Document>
-  );
+  return <Document>{pages}</Document>;
 };
 
 export default PDFExportFinance;
