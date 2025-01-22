@@ -242,11 +242,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF'
   },
   tableCell: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#1E293B'
   },
   tableCellHeader: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#1E293B',
     fontWeight: 'bold'
   }
@@ -316,11 +316,11 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
         <View style={styles.installmentsContent}>
           <View style={styles.comparisonSection}>
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableCellHeader, { flex: 1 }]}>Nº</Text>
-              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Data</Text>
+              <Text style={[styles.tableCellHeader, { flex: 0.5 }]}>Nº</Text>
+              <Text style={[styles.tableCellHeader, { flex: 1.5 }]}>Data</Text>
               <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação A</Text>
               <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação B</Text>
-              <Text style={[styles.tableCellHeader, { flex: 3 }]}>Diferença</Text>
+              <Text style={[styles.tableCellHeader, { flex: 4 }]}>Diferença</Text>
             </View>
             {installments.map((index) => {
               if (!selectedSimA.installments[index] || !selectedSimB.installments[index]) {
@@ -333,11 +333,11 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
 
               return (
                 <View key={index} style={styles.tableRow}>
-                  <Text style={[styles.tableCell, { flex: 1 }]}>{installmentA.number}</Text>
-                  <Text style={[styles.tableCell, { flex: 2 }]}>{installmentA.date}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.5 }]}>{installmentA.number}</Text>
+                  <Text style={[styles.tableCell, { flex: 1.5 }]}>{installmentA.date}</Text>
                   <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
                   <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
-                  <Text style={[styles.tableCell, { flex: 3 }]}>
+                  <Text style={[styles.tableCell, { flex: 4 }]}>
                     {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
                   </Text>
                 </View>
