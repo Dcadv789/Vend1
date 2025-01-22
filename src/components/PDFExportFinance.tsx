@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 10
   },
   headerRow: {
@@ -229,6 +228,23 @@ const styles = StyleSheet.create({
     padding: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0'
+  },
+  installmentsContent: {
+    padding: 30,
+    paddingBottom: 90
+  },
+  installmentsHeader: {
+    marginBottom: 20
+  },
+  installmentsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 8
+  },
+  installmentsSubtitle: {
+    fontSize: 14,
+    color: '#64748B'
   }
 });
 
@@ -458,7 +474,7 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
 
       <Page size="A4" style={styles.page}>
         {renderHeader('Evolução das Parcelas')}
-        <View style={styles.content}>
+        <View style={styles.installmentsContent}>
           <View style={styles.comparisonSection}>
             <View style={styles.tableHeader}>
               <Text style={[styles.value, { flex: 1 }]}>Nº</Text>
