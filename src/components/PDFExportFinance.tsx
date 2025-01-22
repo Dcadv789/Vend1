@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   page: {
     padding: 0,
     fontFamily: 'Helvetica',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     position: 'relative'
   },
   header: {
@@ -229,16 +229,26 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#F8FAFC',
-    padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0'
+    borderBottomColor: '#E2E8F0',
+    paddingVertical: 8,
+    backgroundColor: '#FFFFFF'
   },
   tableRow: {
     flexDirection: 'row',
-    padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0'
+    borderBottomColor: '#E2E8F0',
+    paddingVertical: 8,
+    backgroundColor: '#FFFFFF'
+  },
+  tableCell: {
+    fontSize: 10,
+    color: '#1E293B'
+  },
+  tableCellHeader: {
+    fontSize: 10,
+    color: '#1E293B',
+    fontWeight: 'bold'
   }
 });
 
@@ -306,11 +316,11 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
         <View style={styles.installmentsContent}>
           <View style={styles.comparisonSection}>
             <View style={styles.tableHeader}>
-              <Text style={[styles.value, { flex: 1 }]}>Nº</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Data</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Simulação A</Text>
-              <Text style={[styles.value, { flex: 2 }]}>Simulação B</Text>
-              <Text style={[styles.value, { flex: 3 }]}>Diferença</Text>
+              <Text style={[styles.tableCellHeader, { flex: 1 }]}>Nº</Text>
+              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Data</Text>
+              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação A</Text>
+              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação B</Text>
+              <Text style={[styles.tableCellHeader, { flex: 3 }]}>Diferença</Text>
             </View>
             {installments.map((index) => {
               if (!selectedSimA.installments[index] || !selectedSimB.installments[index]) {
@@ -322,12 +332,12 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
               const diff = installmentA.payment - installmentB.payment;
 
               return (
-                <View key={index} style={[styles.tableRow, { backgroundColor: index % 2 === 0 ? '#F8FAFC' : '#FFFFFF' }]}>
-                  <Text style={[styles.value, { flex: 1 }]}>{installmentA.number}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{installmentA.date}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
-                  <Text style={[styles.value, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
-                  <Text style={[styles.value, { flex: 3 }]}>
+                <View key={index} style={styles.tableRow}>
+                  <Text style={[styles.tableCell, { flex: 1 }]}>{installmentA.number}</Text>
+                  <Text style={[styles.tableCell, { flex: 2 }]}>{installmentA.date}</Text>
+                  <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
+                  <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
+                  <Text style={[styles.tableCell, { flex: 3 }]}>
                     {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
                   </Text>
                 </View>
