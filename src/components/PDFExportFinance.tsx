@@ -9,11 +9,11 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#1E40AF',
-    padding: 30,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    position: 'relative'
+    alignItems: 'flex-end',
+    height: 120
   },
   headerContent: {
     flex: 1,
@@ -21,26 +21,16 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#FFFFFF',
-    fontSize: 28,
-    marginBottom: 12,
-    fontWeight: 'bold'
-  },
-  headerDivider: {
+    fontSize: 22,
+    marginBottom: 20,
+    fontWeight: 'bold',
     position: 'absolute',
-    left: 30,
-    right: 30,
-    bottom: 80,
-    borderBottomWidth: 1,
-    borderBottomColor: '#93C5FD',
-    opacity: 0.3
+    top: 20
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    marginBottom: 12,
-    gap: 20,
-    position: 'relative',
-    marginTop: 20
+    gap: 20
   },
   headerColumn: {
     flex: 1
@@ -67,11 +57,10 @@ const styles = StyleSheet.create({
   },
   headerLogo: {
     position: 'absolute',
-    right: 30,
-    top: 30,
+    right: 20,
+    top: 20,
     width: 80,
-    height: 80,
-    zIndex: 1
+    height: 80
   },
   content: {
     padding: 30
@@ -79,17 +68,15 @@ const styles = StyleSheet.create({
   simulationsContainer: {
     flexDirection: 'row',
     gap: 20,
-    marginBottom: 30
+    marginBottom: 20
   },
   simulationCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
   simulationHeader: {
     marginBottom: 15,
@@ -141,10 +128,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
   comparisonTitle: {
     fontSize: 16,
@@ -157,21 +142,23 @@ const styles = StyleSheet.create({
   },
   comparisonGrid: {
     flexDirection: 'row',
-    gap: 15
+    gap: 8
   },
   comparisonCard: {
     flex: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     borderRadius: 6,
-    padding: 12
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
   comparisonCardTitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#64748B',
     marginBottom: 4
   },
   comparisonCardValue: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1E293B',
     marginBottom: 4
@@ -181,21 +168,34 @@ const styles = StyleSheet.create({
     color: '#059669',
     fontWeight: 'medium'
   },
+  recommendationContainer: {
+    flexDirection: 'row',
+    gap: 20,
+    marginBottom: 20
+  },
   recommendationSection: {
+    flex: 2,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
+  },
+  recommendationSideSection: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
   recommendationHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
-    gap: 10
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    paddingBottom: 12
   },
   recommendationTitle: {
     fontSize: 16,
@@ -203,9 +203,46 @@ const styles = StyleSheet.create({
     color: '#1E293B'
   },
   recommendationText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#475569',
-    lineHeight: 1.5
+    lineHeight: 1.4
+  },
+  recommendationHighlight: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 6,
+    padding: 12,
+    marginTop: 12
+  },
+  recommendationHighlightText: {
+    fontSize: 10,
+    color: '#166534',
+    lineHeight: 1.4
+  },
+  recommendationStats: {
+    marginTop: 12,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 6,
+    padding: 12
+  },
+  recommendationStatsTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 8
+  },
+  recommendationStatsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6
+  },
+  recommendationStatsLabel: {
+    fontSize: 10,
+    color: '#64748B'
+  },
+  recommendationStatsValue: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#1E293B'
   },
   footer: {
     position: 'absolute',
@@ -287,7 +324,6 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             </G>
             <Path fill="#f47400" d="M 23.9375 21.996094 C 19.980469 21.707031 15.953125 25.128906 15.894531 29.914062 C 15.84375 34.269531 19.585938 37.960938 23.925781 37.960938 C 28.273438 37.960938 32.035156 34.273438 31.96875 29.921875 C 31.898438 25.113281 27.917969 21.722656 23.9375 21.996094 Z M 23.9375 21.996094" />
           </Svg>
-          <View style={styles.headerDivider} />
         </View>
 
         <View style={styles.content}>
@@ -408,35 +444,67 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
             </View>
           </View>
 
-          <View style={styles.recommendationSection}>
-            <View style={styles.recommendationHeader}>
-              <Text style={styles.recommendationTitle}>Recomendação</Text>
+          <View style={styles.recommendationContainer}>
+            <View style={styles.recommendationSection}>
+              <View style={styles.recommendationHeader}>
+                <Text style={styles.recommendationTitle}>Recomendação</Text>
+              </View>
+              {getBetterOption() === 'empate' ? (
+                <>
+                  <Text style={styles.recommendationText}>
+                    As simulações são equivalentes em termos financeiros. Considere os seguintes aspectos para sua decisão:
+                  </Text>
+                  <View style={styles.recommendationHighlight}>
+                    <Text style={styles.recommendationHighlightText}>
+                      • Sua disponibilidade financeira mensal{'\n'}
+                      • Preferência pelo sistema de amortização{'\n'}
+                      • Condições específicas oferecidas por cada banco{'\n'}
+                      • Possibilidade de pagamentos antecipados
+                    </Text>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.recommendationText}>
+                    A Simulação {getBetterOption()} apresenta condições mais vantajosas para o seu financiamento.
+                    Baseado na análise detalhada dos números, esta opção oferece uma melhor relação custo-benefício
+                    e maior economia a longo prazo.
+                  </Text>
+                  <View style={styles.recommendationHighlight}>
+                    <Text style={styles.recommendationHighlightText}>
+                      • Menor custo total de financiamento{'\n'}
+                      • Melhor distribuição das parcelas{'\n'}
+                      • Menor incidência de juros{'\n'}
+                      • Melhor relação custo-benefício
+                    </Text>
+                  </View>
+                </>
+              )}
             </View>
-            {getBetterOption() === 'empate' ? (
-              <Text style={styles.recommendationText}>
-                As simulações são equivalentes em termos financeiros. Considere os seguintes aspectos para sua decisão:
-                {'\n\n'}
-                • Sua disponibilidade financeira mensal
-                {'\n'}
-                • Preferência pelo sistema de amortização
-                {'\n'}
-                • Condições específicas oferecidas por cada banco
-                {'\n'}
-                • Possibilidade de pagamentos antecipados
-              </Text>
-            ) : (
-              <Text style={styles.recommendationText}>
-                A Simulação {getBetterOption()} apresenta condições mais vantajosas:
-                {'\n\n'}
-                • Menor custo total de financiamento
-                {'\n'}
-                • Melhor distribuição das parcelas
-                {'\n'}
-                • Menor incidência de juros
-                {'\n'}
-                • Melhor relação custo-benefício
-              </Text>
-            )}
+            
+            <View style={styles.recommendationSideSection}>
+              <Text style={styles.recommendationStatsTitle}>Análise Financeira</Text>
+              <View style={styles.recommendationStats}>
+                <View style={styles.recommendationStatsRow}>
+                  <Text style={styles.recommendationStatsLabel}>Economia Total:</Text>
+                  <Text style={styles.recommendationStatsValue}>
+                    {formatCurrency(Math.abs(metrics.totalAmountDiff))}
+                  </Text>
+                </View>
+                <View style={styles.recommendationStatsRow}>
+                  <Text style={styles.recommendationStatsLabel}>Economia em Juros:</Text>
+                  <Text style={styles.recommendationStatsValue}>
+                    {formatCurrency(Math.abs(metrics.totalInterestDiff))}
+                  </Text>
+                </View>
+                <View style={styles.recommendationStatsRow}>
+                  <Text style={styles.recommendationStatsLabel}>Diferença Mensal:</Text>
+                  <Text style={styles.recommendationStatsValue}>
+                    {formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
 
           <Text style={styles.footer}>
