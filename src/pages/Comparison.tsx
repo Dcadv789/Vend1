@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FileDown, ChevronDown, ChevronUp, CheckCircle, XCircle, AlertCircle, History } from 'lucide-react';
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Notification } from '../components/Notification';
+import PDFExportFinance from '../components/PDFExportFinance';
 
 interface SavedSimulation {
   id: string;
@@ -34,277 +36,6 @@ interface ComparisonMetrics {
   lastPaymentDiff: number;
   averagePaymentDiff: number;
 }
-
-const styles = StyleSheet.create({
-  page: {
-    padding: 40,
-    fontFamily: 'Helvetica',
-  },
-  header: {
-    backgroundColor: '#1E40AF',
-    padding: 20,
-    marginBottom: 30,
-    borderRadius: 8,
-  },
-  headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    color: '#E2E8F0',
-    fontSize: 14,
-  },
-  section: {
-    marginBottom: 25,
-    padding: 15,
-    backgroundColor: '#F8FAFC',
-    borderRadius: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    color: '#1E293B',
-    marginBottom: 15,
-    borderBottom: 1,
-    borderBottomColor: '#E2E8F0',
-    paddingBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 12,
-    color: '#64748B',
-  },
-  value: {
-    fontSize: 12,
-    color: '#1E293B',
-    fontWeight: 'bold',
-  },
-  highlight: {
-    backgroundColor: '#EFF6FF',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
-  },
-  highlightTitle: {
-    fontSize: 16,
-    color: '#1E40AF',
-    marginBottom: 10,
-  },
-  highlightText: {
-    fontSize: 12,
-    color: '#334155',
-    lineHeight: 1.5,
-  },
-  table: {
-    marginTop: 20,
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
-    padding: 10,
-    marginBottom: 1,
-  },
-  tableHeaderText: {
-    fontSize: 10,
-    color: '#475569',
-    flex: 1,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottomColor: '#E2E8F0',
-    borderBottomWidth: 1,
-    padding: 10,
-  },
-  tableCell: {
-    fontSize: 10,
-    color: '#334155',
-    flex: 1,
-  },
-  recommendation: {
-    backgroundColor: '#F0FDF4',
-    padding: 20,
-    borderRadius: 8,
-    marginTop: 30,
-    borderWidth: 1,
-    borderColor: '#86EFAC',
-  },
-  recommendationTitle: {
-    fontSize: 18,
-    color: '#166534',
-    marginBottom: 10,
-  },
-  recommendationText: {
-    fontSize: 12,
-    color: '#166534',
-    lineHeight: 1.5,
-  },
-  metric: {
-    backgroundColor: '#FFFFFF',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  metricLabel: {
-    fontSize: 12,
-    color: '#64748B',
-    marginBottom: 5,
-  },
-  metricValue: {
-    fontSize: 16,
-    color: '#1E293B',
-    fontWeight: 'bold',
-  },
-  footer: {
-    marginTop: 30,
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-  },
-  footerText: {
-    fontSize: 10,
-    color: '#94A3B8',
-    textAlign: 'center',
-  },
-});
-
-const ComparisonPDF = ({ selectedSimA, selectedSimB, metrics, getBetterOption, formatCurrency }: any) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Análise Comparativa de Financiamentos</Text>
-        <Text style={styles.headerSubtitle}>
-          Comparação detalhada entre {selectedSimA.type} e {selectedSimB.type}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Simulação A - {selectedSimA.type}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>Banco:</Text>
-          <Text style={styles.value}>{selectedSimA.bank || 'Não informado'}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor Total do Bem:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimA.financingAmount + selectedSimA.downPayment)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor da Entrada:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimA.downPayment)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor Financiado:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimA.financingAmount)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Taxa Mensal:</Text>
-          <Text style={styles.value}>{selectedSimA.monthlyRate}%</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Prazo:</Text>
-          <Text style={styles.value}>{selectedSimA.months} meses</Text>
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Simulação B - {selectedSimB.type}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>Banco:</Text>
-          <Text style={styles.value}>{selectedSimB.bank || 'Não informado'}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor Total do Bem:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimB.financingAmount + selectedSimB.downPayment)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor da Entrada:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimB.downPayment)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valor Financiado:</Text>
-          <Text style={styles.value}>{formatCurrency(selectedSimB.financingAmount)}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Taxa Mensal:</Text>
-          <Text style={styles.value}>{selectedSimB.monthlyRate}%</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Prazo:</Text>
-          <Text style={styles.value}>{selectedSimB.months} meses</Text>
-        </View>
-      </View>
-
-      <View style={styles.highlight}>
-        <Text style={styles.highlightTitle}>Análise Comparativa</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>Diferença no Total de Juros:</Text>
-          <Text style={styles.value}>{formatCurrency(Math.abs(metrics.totalInterestDiff))}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Diferença no Valor Total:</Text>
-          <Text style={styles.value}>{formatCurrency(Math.abs(metrics.totalAmountDiff))}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Diferença na Primeira Parcela:</Text>
-          <Text style={styles.value}>{formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}</Text>
-        </View>
-      </View>
-
-      <View style={styles.recommendation}>
-        <Text style={styles.recommendationTitle}>Recomendação</Text>
-        {getBetterOption() === 'empate' ? (
-          <Text style={styles.recommendationText}>
-            As simulações são equivalentes. Considere outros fatores como sua disponibilidade financeira mensal 
-            e preferência pelo sistema de amortização.
-          </Text>
-        ) : (
-          <Text style={styles.recommendationText}>
-            A Simulação {getBetterOption()} apresenta condições mais vantajosas, oferecendo uma melhor relação 
-            custo-benefício considerando juros totais, valor das parcelas e custo total do financiamento.
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Análise gerada em {new Date().toLocaleDateString('pt-BR')}
-        </Text>
-      </View>
-    </Page>
-
-    <Page size="A4" style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Evolução das Parcelas</Text>
-        <Text style={styles.headerSubtitle}>Comparativo mensal entre as simulações</Text>
-      </View>
-
-      <View style={styles.table}>
-        <View style={styles.tableHeader}>
-          <Text style={styles.tableHeaderText}>Nº</Text>
-          <Text style={styles.tableHeaderText}>Simulação A</Text>
-          <Text style={styles.tableHeaderText}>Simulação B</Text>
-          <Text style={styles.tableHeaderText}>Diferença</Text>
-        </View>
-        {selectedSimA.installments.map((installment: Installment, index: number) => {
-          const diff = installment.payment - selectedSimB.installments[index].payment;
-          return (
-            <View style={styles.tableRow} key={index}>
-              <Text style={styles.tableCell}>{installment.number}</Text>
-              <Text style={styles.tableCell}>{formatCurrency(installment.payment)}</Text>
-              <Text style={styles.tableCell}>{formatCurrency(selectedSimB.installments[index].payment)}</Text>
-              <Text style={styles.tableCell}>
-                {formatCurrency(Math.abs(diff))} {diff > 0 ? 'mais cara' : 'mais barata'}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
-    </Page>
-  </Document>
-);
 
 function Comparison() {
   const [simulations, setSimulations] = useState<SavedSimulation[]>([]);
@@ -390,8 +121,16 @@ function Comparison() {
 
   if (simulations.length < 2) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Comparação entre Sistemas</h2>
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-8 text-white mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            Comparação entre Sistemas
+          </h1>
+          <p className="text-blue-100">
+            Compare diferentes simulações para encontrar a melhor opção para você
+          </p>
+        </div>
+
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="text-center py-8">
             <History size={48} className="mx-auto text-gray-400 mb-4" />
@@ -406,10 +145,12 @@ function Comparison() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Comparação entre Sistemas</h2>
-        <p className="text-gray-600">
-          Compare diferentes simulações para encontrar a melhor opção para você.
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-8 text-white">
+        <h1 className="text-3xl font-bold mb-2">
+          Comparação entre Sistemas
+        </h1>
+        <p className="text-blue-100">
+          Compare diferentes simulações para encontrar a melhor opção para você
         </p>
       </div>
 
@@ -429,7 +170,7 @@ function Comparison() {
             <option value="">Selecione uma simulação</option>
             {simulations.map((sim) => (
               <option key={sim.id} value={sim.id}>
-                {sim.type} - {sim.bank || 'Banco não informado'} - {formatCurrency(sim.financingAmount + sim.downPayment)}
+                {sim.type} - {sim.bank || 'Banco não informado'} - {formatCurrency(sim.financingAmount)}
               </option>
             ))}
           </select>
@@ -449,7 +190,7 @@ function Comparison() {
             <option value="">Selecione uma simulação</option>
             {simulations.map((sim) => (
               <option key={sim.id} value={sim.id}>
-                {sim.type} - {sim.bank || 'Banco não informado'} - {formatCurrency(sim.financingAmount + sim.downPayment)}
+                {sim.type} - {sim.bank || 'Banco não informado'} - {formatCurrency(sim.financingAmount)}
               </option>
             ))}
           </select>
@@ -471,7 +212,7 @@ function Comparison() {
                 </div>
                 <PDFDownloadLink
                   document={
-                    <ComparisonPDF
+                    <PDFExportFinance
                       selectedSimA={selectedSimA}
                       selectedSimB={selectedSimB}
                       metrics={metrics}
@@ -503,7 +244,7 @@ function Comparison() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Valor Total do Bem:</span>
                       <span className="font-semibold text-gray-800">
-                        {formatCurrency(selectedSimA.financingAmount + selectedSimA.downPayment)}
+                        {formatCurrency(selectedSimA.financingAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -515,8 +256,12 @@ function Comparison() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Valor Financiado:</span>
                       <span className="font-semibold text-gray-800">
-                        {formatCurrency(selectedSimA.financingAmount)}
+                        {formatCurrency(selectedSimA.financingAmount - selectedSimA.downPayment)}
                       </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Taxa de Juros:</span>
+                      <span className="font-semibold text-gray-800">{selectedSimA.monthlyRate}% a.m.</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Primeira Parcela:</span>
@@ -544,7 +289,7 @@ function Comparison() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Valor Total do Bem:</span>
                       <span className="font-semibold text-gray-800">
-                        {formatCurrency(selectedSimB.financingAmount + selectedSimB.downPayment)}
+                        {formatCurrency(selectedSimB.financingAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -556,8 +301,12 @@ function Comparison() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Valor Financiado:</span>
                       <span className="font-semibold text-gray-800">
-                        {formatCurrency(selectedSimB.financingAmount)}
+                        {formatCurrency(selectedSimB.financingAmount - selectedSimB.downPayment)}
                       </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Taxa de Juros:</span>
+                      <span className="font-semibold text-gray-800">{selectedSimB.monthlyRate}% a.m.</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Primeira Parcela:</span>
@@ -580,8 +329,8 @@ function Comparison() {
                   <h5 className="text-lg font-semibold text-blue-900 mb-4">Diferença nos Juros</h5>
                   <div className="flex items-center justify-between">
                     <span className="text-blue-800">{formatCurrency(Math.abs(metrics.totalInterestDiff))}</span>
-                    <span className={`text-sm font-medium ${metrics.totalInterestDiff > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {metrics.totalInterestDiff > 0 ? 'B mais econômico' : 'A mais econômico'}
+                    <span className="text-sm font-medium text-green-600">
+                      Opção {metrics.totalInterestDiff > 0 ? 'B' : 'A'} mais econômica
                     </span>
                   </div>
                 </div>
@@ -590,8 +339,8 @@ function Comparison() {
                   <h5 className="text-lg font-semibold text-blue-900 mb-4">Diferença no Valor Total</h5>
                   <div className="flex items-center justify-between">
                     <span className="text-blue-800">{formatCurrency(Math.abs(metrics.totalAmountDiff))}</span>
-                    <span className={`text-sm font-medium ${metrics.totalAmountDiff > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {metrics.totalAmountDiff > 0 ? 'B mais econômico' : 'A mais econômico'}
+                    <span className="text-sm font-medium text-green-600">
+                      Opção {metrics.totalAmountDiff > 0 ? 'B' : 'A'} mais econômica
                     </span>
                   </div>
                 </div>
@@ -600,8 +349,8 @@ function Comparison() {
                   <h5 className="text-lg font-semibold text-blue-900 mb-4">Diferença na Primeira Parcela</h5>
                   <div className="flex items-center justify-between">
                     <span className="text-blue-800">{formatCurrency(Math.abs(metrics.monthlyPaymentDiff))}</span>
-                    <span className={`text-sm font-medium ${metrics.monthlyPaymentDiff > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {metrics.monthlyPaymentDiff > 0 ? 'B mais baixa' : 'A mais baixa'}
+                    <span className="text-sm font-medium text-green-600">
+                      Opção {metrics.monthlyPaymentDiff > 0 ? 'B' : 'A'} mais econômica
                     </span>
                   </div>
                 </div>
@@ -677,9 +426,8 @@ function Comparison() {
                           <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Simulação A
                            </th>
-                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Simulação B
-                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Simulação B
+                 </th>
                           <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Diferença
                           </th>
@@ -687,7 +435,7 @@ function Comparison() {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {Array.from({ length: Math.max(selectedSimA.installments.length, selectedSimB.installments.length) }).map((_, index) => {
-                          const installmentA = selectedSimA.installments[index] || { number: index + 1, date: '-', payment: 0 };
+                          const installmentA = selectedSimA.installments[index] || { number: index + 1 , date: '-', payment: 0 };
                           const installmentB = selectedSimB.installments[index] || { number: index + 1, date: '-', payment: 0 };
                           const diff = installmentA.payment - installmentB.payment;
                           return (
@@ -705,11 +453,8 @@ function Comparison() {
                                 {formatCurrency(installmentB.payment)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`text-sm ${diff > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                  {formatCurrency(Math.abs(diff))}
-                                  <span className="text-gray-500 ml-1">
-                                    {diff > 0 ? 'mais cara' : 'mais barata'}
-                                  </span>
+                                <span className="text-sm text-green-600">
+                                  {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
                                 </span>
                               </td>
                             </tr>
