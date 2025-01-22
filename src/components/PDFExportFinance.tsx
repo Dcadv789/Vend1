@@ -242,11 +242,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF'
   },
   tableCell: {
-    fontSize: 9,
+    fontSize: 11,
     color: '#1E293B'
   },
   tableCellHeader: {
-    fontSize: 9,
+    fontSize: 11,
     color: '#1E293B',
     fontWeight: 'bold'
   }
@@ -297,55 +297,53 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
     </View>
   );
 
-  const installmentsPerPage = 25;
-  const totalInstallments = Math.min(
-    selectedSimA.installments.length,
-    selectedSimB.installments.length
-  );
-  const totalPages = Math.ceil(totalInstallments / installmentsPerPage);
-
-  const pages = [];
-  for (let i = 0; i < totalPages; i++) {
-    const startIndex = i * installmentsPerPage;
-    const endIndex = Math.min(startIndex + installmentsPerPage, totalInstallments);
-    const installments = Array.from({ length: endIndex - startIndex }).map((_, idx) => startIndex + idx);
-
-    pages.push(
-      <Page key={i} size="A4" style={styles.page}>
-        {renderHeader('Evolução das Parcelas')}
-        <View style={styles.installmentsContent}>
-          <View style={styles.comparisonSection}>
-            <View style={styles.tableHeader}>
-              <Text style={[styles.tableCellHeader, { flex: 0.5 }]}>Nº</Text>
-              <Text style={[styles.tableCellHeader, { flex: 1.5 }]}>Data</Text>
-              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação A</Text>
-              <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação B</Text>
-              <Text style={[styles.tableCellHeader, { flex: 4 }]}>Diferença</Text>
-            </View>
-            {installments.map((index) => {
-              if (!selectedSimA.installments[index] || !selectedSimB.installments[index]) {
-                return null;
-              }
-
-              const installmentA = selectedSimA.installments[index];
-              const installmentB = selectedSimB.installments[index];
-              const diff = installmentA.payment - installmentB.payment;
-
-              return (
-                <View key={index} style={styles.tableRow}>
-                  <Text style={[styles.tableCell, { flex: 0.5 }]}>{installmentA.number}</Text>
-                  <Text style={[styles.tableCell, { flex: 1.5 }]}>{installmentA.date}</Text>
-                  <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
-                  <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
-                  <Text style={[styles.tableCell, { flex: 4 }]}>
-                    {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
-                  </Text>
-                </View>
-              );
-            }).filter(Boolean)}
-          </View>
+  const renderInstallmentsTable = (startIndex: number, endIndex: number) => (
+    <View style={styles.comparisonSection}>
+      {startIndex === 0 && (
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableCellHeader, { flex: 0.5 }]}>Nº</Text>
+          <Text style={[styles.tableCellHeader, { flex: 1.5 }]}>Data</Text>
+          <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação A</Text>
+          <Text style={[styles.tableCellHeader, { flex: 2 }]}>Simulação B</Text>
+          <Text style={[styles.tableCellHeader, { flex: 4 }]}>Diferença</Text>
         </View>
-        <Text style={styles.pageNumber}>Página {i + 2}</Text>
+      )}
+      {selectedSimA.installments.slice(startIndex, endIndex).map((installmentA, index) => {
+        const currentIndex = startIndex + index;
+        if (!selectedSimB.installments[currentIndex]) return null;
+        const installmentB = selectedSimB.installments[currentIndex];
+        const diff = installmentA.payment - installmentB.payment;
+
+        return (
+          <View key={currentIndex} style={styles.tableRow}>
+            <Text style={[styles.tableCell, { flex: 0.5 }]}>{installmentA.number}</Text>
+            <Text style={[styles.tableCell, { flex: 1.5 }]}>{installmentA.date}</Text>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentA.payment)}</Text>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{formatCurrency(installmentB.payment)}</Text>
+            <Text style={[styles.tableCell, { flex: 4 }]}>
+              {formatCurrency(Math.abs(diff))} - Opção {diff > 0 ? 'B' : 'A'} mais econômica
+            </Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+
+  const totalInstallments = Math.min(selectedSimA.installments.length, selectedSimB.installments.length);
+  const remainingInstallments = totalInstallments - 20;
+  const additionalPages = Math.ceil(remainingInstallments / 25);
+
+  const installmentPages = [];
+  for (let i = 0; i < additionalPages; i++) {
+    const startIndex = 20 + (i * 25);
+    const endIndex = Math.min(startIndex + 25, totalInstallments);
+    
+    installmentPages.push(
+      <Page key={i + 2} size="A4" style={styles.page}>
+        <View style={styles.installmentsContent}>
+          {renderInstallmentsTable(startIndex, endIndex)}
+        </View>
+        <Text style={styles.pageNumber}>Página {i + 3}</Text>
         <Text style={styles.footer}>
           Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
         </Text>
@@ -532,7 +530,19 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
           Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
         </Text>
       </Page>
-      {pages}
+
+      <Page size="A4" style={styles.page}>
+        {renderHeader('Evolução das Parcelas')}
+        <View style={styles.installmentsContent}>
+          {renderInstallmentsTable(0, 20)}
+        </View>
+        <Text style={styles.pageNumber}>Página 2</Text>
+        <Text style={styles.footer}>
+          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
+        </Text>
+      </Page>
+
+      {installmentPages}
     </Document>
   );
 };
