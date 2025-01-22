@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Save, Eye, EyeOff } from 'lucide-react';
+import { Notification } from '../components/Notification';
 
 interface Installment {
   number: number;
@@ -10,11 +11,16 @@ interface Installment {
   balance: number;
 }
 
-function SACSimulation() {
+export default function SACSimulation() {
+  const today = new Date().toISOString().split('T')[0];
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+  const defaultFirstPayment = nextMonth.toISOString().split('T')[0];
+
   const [financingAmount, setFinancingAmount] = useState('');
   const [downPayment, setDownPayment] = useState('');
-  const [operationDate, setOperationDate] = useState('');
-  const [firstPaymentDate, setFirstPaymentDate] = useState('');
+  const [operationDate, setOperationDate] = useState(today);
+  const [firstPaymentDate, setFirstPaymentDate] = useState(defaultFirstPayment);
   const [months, setMonths] = useState('');
   const [monthlyRate, setMonthlyRate] = useState('');
   const [yearlyRate, setYearlyRate] = useState('');
@@ -23,8 +29,30 @@ function SACSimulation() {
   const [showInstallments, setShowInstallments] = useState(true);
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [totals, setTotals] = useState({ payment: 0, amortization: 0, interest: 0 });
+  const [showNotification, setShowNotification] = useState(false);
 
-  const financedAmount = Number(financingAmount) - Number(downPayment);
+  const financedAmount = Number(financingAmount) / 100 - Number(downPayment) / 100;
+  const totalPurchaseAmount = Number(financingAmount) / 100;
+
+  const formatInputCurrency = (value: string) => {
+    if (!value) return 'R$ 0,00';
+    let numericValue = value.replace(/\D/g, '');
+    const amount = parseFloat(numericValue) / 100;
+    return amount.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  };
+
+  const handleFinancingAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setFinancingAmount(rawValue);
+  };
+
+  const handleDownPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setDownPayment(rawValue);
+  };
 
   const calculateSAC = () => {
     const principal = financedAmount;
@@ -76,8 +104,40 @@ function SACSimulation() {
   };
 
   const handleSaveSimulation = () => {
-    // TODO: Implement save functionality
-    console.log('Saving simulation...');
+    const simulation = {
+      id: Date.now().toString(),
+      type: 'SAC' as const,
+      date: new Date().toLocaleDateString('pt-BR'),
+      financingAmount: Number(financingAmount) / 100,
+      downPayment: Number(downPayment) / 100,
+      months: Number(months),
+      monthlyRate: Number(monthlyRate),
+      bank,
+      firstPayment: installments[0].payment,
+      lastPayment: installments[installments.length - 1].payment,
+      totalAmount: totals.payment + Number(downPayment) / 100,
+      totalInterest: totals.interest,
+      installments: installments
+    };
+
+    const savedSimulations = localStorage.getItem('simulations');
+    const simulations = savedSimulations ? JSON.parse(savedSimulations) : [];
+    simulations.push(simulation);
+    localStorage.setItem('simulations', JSON.stringify(simulations));
+    
+    setFinancingAmount('');
+    setDownPayment('');
+    setOperationDate(today);
+    setFirstPaymentDate(defaultFirstPayment);
+    setMonths('');
+    setMonthlyRate('');
+    setYearlyRate('');
+    setBank('');
+    setShowResults(false);
+    setShowInstallments(true);
+    setInstallments([]);
+    setTotals({ payment: 0, amortization: 0, interest: 0 });
+    setShowNotification(true);
   };
 
   const toggleInstallments = () => {
@@ -105,6 +165,13 @@ function SACSimulation() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      {showNotification && (
+        <Notification
+          message="Simulação salva com sucesso!"
+          onClose={() => setShowNotification(false)}
+        />
+      )}
+
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Tabela SAC</h2>
         <p className="text-gray-600">
@@ -122,31 +189,31 @@ function SACSimulation() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Valor do Financiamento
+                Valor Total do Bem
               </label>
               <input
-                type="number"
-                value={financingAmount}
-                onChange={(e) => setFinancingAmount(e.target.value)}
+                type="text"
+                value={formatInputCurrency(financingAmount)}
+                onChange={handleFinancingAmountChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="R$ 0,00"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Entrada
+                Valor da Entrada
               </label>
               <input
-                type="number"
-                value={downPayment}
-                onChange={(e) => setDownPayment(e.target.value)}
+                type="text"
+                value={formatInputCurrency(downPayment)}
+                onChange={handleDownPaymentChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="R$ 0,00"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Saldo a Financiar
+                Valor a Financiar
               </label>
               <input
                 type="text"
@@ -182,9 +249,9 @@ function SACSimulation() {
                 Prazo (meses)
               </label>
               <input
-                type="number"
+                type="text"
                 value={months}
-                onChange={(e) => setMonths(e.target.value)}
+                onChange={(e) => setMonths(e.target.value.replace(/\D/g, ''))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
@@ -194,12 +261,11 @@ function SACSimulation() {
                 Taxa de Juros Mensal (%)
               </label>
               <input
-                type="number"
+                type="text"
                 value={monthlyRate}
                 onChange={handleMonthlyRateChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0.00"
-                step="0.01"
               />
             </div>
             <div>
@@ -207,12 +273,11 @@ function SACSimulation() {
                 Taxa de Juros Anual (%)
               </label>
               <input
-                type="number"
+                type="text"
                 value={yearlyRate}
                 onChange={handleYearlyRateChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0.00"
-                step="0.01"
               />
             </div>
             <div>
@@ -250,19 +315,43 @@ function SACSimulation() {
                   Detalhamento da simulação do financiamento
                 </p>
               </div>
-              <div className="grid grid-cols-5 gap-4">
-                <div className="bg-blue-600 p-4 rounded-xl text-white">
-                  <p className="text-sm font-medium mb-1 opacity-90">Valor Total</p>
-                  <p className="text-lg font-semibold">{formatCurrency(totals.payment)}</p>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">Valores da Compra</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Valor Total do Bem:</span>
+                      <span className="font-medium">{formatCurrency(totalPurchaseAmount)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Valor da Entrada:</span>
+                      <span className="font-medium text-green-600">{formatCurrency(Number(downPayment) / 100)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Valor Financiado:</span>
+                      <span className="font-medium">{formatCurrency(financedAmount)}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-blue-600 p-4 rounded-xl text-white">
-                  <p className="text-sm font-medium mb-1 opacity-90">Total de Juros</p>
-                  <p className="text-lg font-semibold">{formatCurrency(totals.interest)}</p>
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">Custos do Financiamento</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Total de Juros:</span>
+                      <span className="font-medium text-red-600">{formatCurrency(totals.interest)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Custo Total do Financiamento:</span>
+                      <span className="font-medium">{formatCurrency(totals.payment)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Custo Total (com entrada):</span>
+                      <span className="font-medium">{formatCurrency(totals.payment + Number(downPayment) / 100)}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-blue-600 p-4 rounded-xl text-white">
-                  <p className="text-sm font-medium mb-1 opacity-90">Total Amortizado</p>
-                  <p className="text-lg font-semibold">{formatCurrency(totals.amortization)}</p>
-                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-4">
                 <div className="bg-blue-600 p-4 rounded-xl text-white">
                   <p className="text-sm font-medium mb-1 opacity-90">Primeira Parcela</p>
                   <p className="text-lg font-semibold">
@@ -274,6 +363,14 @@ function SACSimulation() {
                   <p className="text-lg font-semibold">
                     {installments.length > 0 ? formatCurrency(installments[installments.length - 1].payment) : '-'}
                   </p>
+                </div>
+                <div className="bg-blue-600 p-4 rounded-xl text-white">
+                  <p className="text-sm font-medium mb-1 opacity-90">Total Amortizado</p>
+                  <p className="text-lg font-semibold">{formatCurrency(totals.amortization)}</p>
+                </div>
+                <div className="bg-blue-600 p-4 rounded-xl text-white">
+                  <p className="text-sm font-medium mb-1 opacity-90">Prazo</p>
+                  <p className="text-lg font-semibold">{months} meses</p>
                 </div>
               </div>
             </div>
@@ -375,5 +472,3 @@ function SACSimulation() {
     </div>
   );
 }
-
-export default SACSimulation;
