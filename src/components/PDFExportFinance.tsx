@@ -10,13 +10,16 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#1E40AF',
     padding: 20,
+    paddingBottom: 10,
     flexDirection: 'column',
-    height: 140
+    height: 110
   },
   headerContent: {
     flex: 1,
     marginRight: 100,
-    marginTop: 20
+    marginTop: 0,
+    position: 'relative',
+    top: 10
   },
   headerTitle: {
     color: '#FFFFFF',
@@ -27,7 +30,9 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    gap: 20
+    gap: 20,
+    position: 'absolute',
+    bottom: 0
   },
   headerColumn: {
     flex: 1
