@@ -359,7 +359,8 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
   );
 
   const totalInstallments = Math.max(selectedSimA.installments.length, selectedSimB.installments.length);
-  const pages = Math.ceil((totalInstallments - 20) / 25) + 1;
+  const installmentsPerPage = 20;
+  const pages = Math.ceil(totalInstallments / installmentsPerPage);
 
   return (
     <Document>
@@ -540,20 +541,14 @@ const PDFExportFinance: React.FC<PDFExportFinanceProps> = ({
         </Text>
       </Page>
 
-      <Page size="A4" style={styles.page}>
-        {renderHeader('Evolução das Parcelas')}
-        <View style={styles.content}>
-          {renderInstallmentsTable(0, 20)}
-        </View>
-        <Text style={styles.footer}>
-          Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
-        </Text>
-      </Page>
-
-      {Array.from({ length: pages - 2 }).map((_, index) => (
+      {Array.from({ length: pages }).map((_, index) => (
         <Page key={index} size="A4" style={styles.page}>
+          {renderHeader('Evolução das Parcelas')}
           <View style={styles.content}>
-            {renderInstallmentsTable(20 + (index * 25), Math.min(20 + ((index + 1) * 25), totalInstallments))}
+            {renderInstallmentsTable(
+              index * installmentsPerPage,
+              Math.min((index + 1) * installmentsPerPage, totalInstallments)
+            )}
           </View>
           <Text style={styles.footer}>
             Copyright ® 2025 DC ADVISORS - Todos os direitos reservados
